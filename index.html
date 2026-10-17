@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#170d46">
+  <meta name="description" content="Vòng quay may mắn — thêm lựa chọn và quay để tìm kết quả ngẫu nhiên.">
+  <title>Vòng Quay May Mắn</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Vòng quay may mắn">
+      <span class="brand-icon">✦</span>
+      <span>Vòng Quay <b>May Mắn</b></span>
+    </a>
+    <div class="top-actions">
+      <button class="button button-ghost" id="resetBtn" type="button" title="Khôi phục danh sách mẫu">↺ <span>Khôi phục mẫu</span></button>
+      <button class="button button-ghost" id="clearBtn" type="button" title="Xóa tất cả lựa chọn">⌫ <span>Xóa tất cả</span></button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="wheel-panel panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">LET THE GOOD TIMES SPIN</p>
+          <h1>Hôm nay bạn <span>may mắn</span> đến đâu?</h1>
+          <p class="subheading">Thêm lựa chọn, nhấn quay và để chiếc vòng quyết định.</p>
+        </div>
+        <div class="status-pill"><span class="status-dot"></span> Ngẫu nhiên công bằng</div>
+      </div>
+
+      <div class="wheel-stage">
+        <div class="wheel-glow"></div>
+        <div class="pointer" aria-hidden="true"><span></span></div>
+        <canvas id="wheelCanvas" width="900" height="900" aria-label="Vòng quay các lựa chọn"></canvas>
+        <div class="wheel-hub" aria-hidden="true"><span>✦</span></div>
+      </div>
+
+      <button class="spin-button" id="spinBtn" type="button">
+        <span class="spin-icon">⟳</span>
+        <span class="spin-label">QUAY NGAY</span>
+        <span class="spin-arrow">→</span>
+      </button>
+      <p class="spin-hint" id="spinHint">Nhấn vào vòng quay hoặc nút bên trên để bắt đầu · 10 giây</p>
+      <div class="wheel-footer">
+        <span>🎯 <b id="itemCount">8</b> lựa chọn</span>
+        <span>⏱ Thời gian quay: <b>10 giây</b></span>
+        <span>💾 Tự động lưu trên thiết bị</span>
+      </div>
+    </section>
+
+    <aside class="side-panel panel">
+      <div class="side-heading">
+        <div>
+          <p class="eyebrow">YOUR OPTIONS</p>
+          <h2>Danh sách lựa chọn</h2>
+        </div>
+        <span class="count-badge" id="countBadge">08</span>
+      </div>
+      <p class="side-description">Mỗi lựa chọn có cơ hội trúng như nhau. Bạn có thể sửa hoặc xóa bất cứ lúc nào.</p>
+
+      <div class="items-list" id="itemsList" aria-live="polite"></div>
+
+      <div class="add-section">
+        <div class="add-title"><span class="plus-circle">+</span><h3>Thêm lựa chọn mới</h3></div>
+        <form id="addForm" class="add-form">
+          <label class="sr-only" for="itemInput">Tên lựa chọn</label>
+          <input id="itemInput" maxlength="48" autocomplete="off" placeholder="Ví dụ: Đi uống trà sữa..." required>
+          <div class="add-bottom">
+            <div class="color-picker" id="colorPicker" aria-label="Chọn màu">
+              <button type="button" class="color-dot selected" data-color="#ff4f81" style="--dot:#ff4f81" aria-label="Hồng"></button>
+              <button type="button" class="color-dot" data-color="#ff9f43" style="--dot:#ff9f43" aria-label="Cam"></button>
+              <button type="button" class="color-dot" data-color="#ffd447" style="--dot:#ffd447" aria-label="Vàng"></button>
+              <button type="button" class="color-dot" data-color="#43c985" style="--dot:#43c985" aria-label="Xanh lá"></button>
+              <button type="button" class="color-dot" data-color="#26b8e8" style="--dot:#26b8e8" aria-label="Xanh da trời"></button>
+              <button type="button" class="color-dot" data-color="#477bff" style="--dot:#477bff" aria-label="Xanh dương"></button>
+              <button type="button" class="color-dot" data-color="#a855f7" style="--dot:#a855f7" aria-label="Tím"></button>
+            </div>
+            <button class="button button-add" type="submit"><span>＋</span> Thêm lựa chọn</button>
+          </div>
+        </form>
+      </div>
+      <div class="side-note"><span>✦</span><p><b>Mẹo nhỏ</b><br>Thêm ít nhất 2 lựa chọn để vòng quay thú vị hơn.</p></div>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    <span>✦ Made for a little bit of luck</span>
+    <span>Vòng quay may mắn <i>•</i> HTML · CSS · JavaScript</span>
+  </footer>
+
+  <div class="modal-backdrop" id="resultModal" role="dialog" aria-modal="true" aria-labelledby="resultTitle" hidden>
+    <div class="result-card">
+      <button class="modal-close" id="closeModal" type="button" aria-label="Đóng kết quả">×</button>
+      <div class="confetti-burst" aria-hidden="true"><span>✦</span><span>✧</span><span>✦</span><span>✧</span><span>✦</span></div>
+      <div class="trophy">🏆</div>
+      <p class="eyebrow">VŨ TRỤ ĐÃ CHỌN</p>
+      <h2 id="resultTitle">Chúc mừng!</h2>
+      <p class="result-intro">Kết quả vòng quay của bạn là</p>
+      <div class="winner-name" id="winnerName"></div>
+      <div class="result-actions">
+        <button class="button button-primary" id="spinAgainBtn" type="button">⟳ Quay lại</button>
+        <button class="button button-ghost-dark" id="doneBtn" type="button">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="js/app.js"></script>
+</body>
+</html>
