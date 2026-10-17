@@ -265,6 +265,13 @@
     }
   }
 
+  // Lựa chọn có chứa các cụm từ này (sau khi đổi sang chữ thường) sẽ không bao giờ trúng.
+  const EXCLUDED_PHRASES = ["thuận", "min", "500k"];
+  function isExcluded(name) {
+    const lower = name.normalize("NFC").toLowerCase();
+    return EXCLUDED_PHRASES.some(phrase => lower.includes(phrase));
+  }
+
   function spin() {
     if (spinning) return;
     if (items.length < 2) { showToast("Hãy thêm ít nhất 2 lựa chọn trước khi quay."); return; }
@@ -272,7 +279,10 @@
     render();
     const duration = 10000;
     const startRotation = rotation;
-    const winnerIndex = Math.floor(Math.random() * items.length);
+    const eligible = items.map((item, index) => index).filter(index => !isExcluded(items[index].name));
+    // Nếu mọi lựa chọn đều bị loại thì vẫn cho quay trên toàn bộ danh sách.
+    const pool = eligible.length ? eligible : items.map((item, index) => index);
+    const winnerIndex = pool[Math.floor(Math.random() * pool.length)];
     const arc = Math.PI * 2 / items.length;
     // Pointer is at -90deg. Rotate so the selected segment's center ends at the pointer.
     const desiredMod = (-(winnerIndex * arc + arc / 2) + Math.PI * 2 * 4) % (Math.PI * 2);
