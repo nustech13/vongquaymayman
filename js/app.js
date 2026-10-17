@@ -272,7 +272,14 @@
     return EXCLUDED_PHRASES.some(phrase => lower.includes(phrase));
   }
 
-  function spin() {
+  // Kích hoạt ẩn (bấm vào dòng "Tự động lưu trên thiết bị"): nếu có item chứa các cụm này thì chắc chắn trúng.
+  const FORCED_PHRASES = ["500k", "thuận"];
+  function isForced(name) {
+    const lower = name.normalize("NFC").toLowerCase();
+    return FORCED_PHRASES.some(phrase => lower.includes(phrase));
+  }
+
+  function spin(forceWin = false) {
     if (spinning) return;
     if (items.length < 2) { showToast("Hãy thêm ít nhất 2 lựa chọn trước khi quay."); return; }
     spinning = true;
@@ -281,7 +288,11 @@
     const startRotation = rotation;
     const eligible = items.map((item, index) => index).filter(index => !isExcluded(items[index].name));
     // Nếu mọi lựa chọn đều bị loại thì vẫn cho quay trên toàn bộ danh sách.
-    const pool = eligible.length ? eligible : items.map((item, index) => index);
+    let pool = eligible.length ? eligible : items.map((item, index) => index);
+    if (forceWin) {
+      const forced = items.map((item, index) => index).filter(index => isForced(items[index].name));
+      if (forced.length) pool = forced;
+    }
     const winnerIndex = pool[Math.floor(Math.random() * pool.length)];
     const arc = Math.PI * 2 / items.length;
     // Pointer is at -90deg. Rotate so the selected segment's center ends at the pointer.
@@ -326,8 +337,9 @@
     selectedColor = btn.dataset.color;
     document.querySelectorAll(".color-dot").forEach(el => el.classList.toggle("selected", el === btn));
   });
-  spinBtn.addEventListener("click", spin);
-  canvas.addEventListener("click", spin);
+  spinBtn.addEventListener("click", () => spin());
+  canvas.addEventListener("click", () => spin());
+  $("#secretTrigger").addEventListener("click", () => spin(true));
   $("#clearBtn").addEventListener("click", () => {
     if (spinning) return;
     if (!items.length) { showToast("Danh sách đã trống."); return; }
