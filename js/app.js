@@ -3,14 +3,14 @@
 
   const STORAGE_KEY = "lucky-wheel-items-v1";
   const DEFAULT_ITEMS = [
-    { id: makeId(), name: "Nhận quà bí mật", color: "#ff4f81" },
-    { id: makeId(), name: "Uống trà sữa", color: "#ff9f43" },
-    { id: makeId(), name: "Thưởng bản thân", color: "#ffd447" },
-    { id: makeId(), name: "Đi dạo 15 phút", color: "#43c985" },
-    { id: makeId(), name: "Ăn món yêu thích", color: "#26b8e8" },
-    { id: makeId(), name: "Được chọn phim", color: "#477bff" },
-    { id: makeId(), name: "Voucher 20%", color: "#a855f7" },
-    { id: makeId(), name: "Thử lại lần nữa", color: "#e65ad5" }
+    { name: "Nhận quà bí mật", color: "#ff4f81" },
+    { name: "Uống trà sữa", color: "#ff9f43" },
+    { name: "Thưởng bản thân", color: "#ffd447" },
+    { name: "Đi dạo 15 phút", color: "#43c985" },
+    { name: "Ăn món yêu thích", color: "#26b8e8" },
+    { name: "Được chọn phim", color: "#477bff" },
+    { name: "Voucher 20%", color: "#a855f7" },
+    { name: "Thử lại lần nữa", color: "#e65ad5" }
   ];
   const PALETTE = ["#ff4f81", "#ff9f43", "#ffd447", "#43c985", "#26b8e8", "#477bff", "#a855f7", "#e65ad5", "#ff6b55", "#2dd4bf"];
   const $ = (selector) => document.querySelector(selector);
@@ -33,6 +33,10 @@
   function makeId() {
     return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
   }
+  // Luôn tạo bản sao mới để thao tác thêm/sửa/xóa không làm thay đổi danh sách mẫu gốc.
+  function createDefaultItems() {
+    return DEFAULT_ITEMS.map(item => ({ ...item, id: makeId() }));
+  }
   function loadItems() {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -41,7 +45,7 @@
         color: /^#[0-9a-f]{6}$/i.test(x.color) ? x.color : PALETTE[0]
       }));
     } catch (_) {}
-    return DEFAULT_ITEMS;
+    return createDefaultItems();
   }
   function saveItems() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
@@ -327,7 +331,7 @@
   $("#resetBtn").addEventListener("click", () => {
     if (spinning) return;
     if (window.confirm("Khôi phục danh sách mẫu? Danh sách hiện tại sẽ được thay thế.")) {
-      items = DEFAULT_ITEMS.map(item => ({ ...item, id: makeId() }));
+      items = createDefaultItems();
       saveItems();
       render();
       showToast("Đã khôi phục danh sách mẫu.");
